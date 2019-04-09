@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 git add --all
-git commit -m "hi"
+git commit -m "add files"
 git push
 

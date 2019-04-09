@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-tensorboard --logdir=logs/CBOW
+tensorboard --logdir=log/train
