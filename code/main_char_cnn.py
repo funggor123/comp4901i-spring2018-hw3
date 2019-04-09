@@ -12,7 +12,6 @@ from preprocess_char_cnn import get_dataloaders
 from model_char_cnn import CharCNN
 
 use_gpu = torch.cuda.is_available()
-use_gpu = True
 
 def trainer(train_loader,dev_loader, model, optimizer, criterion, epoch=1000, early_stop=3, scheduler=None):
     
