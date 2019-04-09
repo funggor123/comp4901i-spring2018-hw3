@@ -1,17 +1,20 @@
 import pandas as pd
+import re
 import numpy as np
+import pickle
 import argparse
 from tqdm import tqdm
 
 import torch
 import torch.nn as nn
+import torch.utils.data as data
+import torch.nn.functional as F
 
-from sklearn.metrics import classification_report, accuracy_score
+from sklearn.metrics import f1_score, classification_report, accuracy_score
 
 from preprocess import get_dataloaders
 from model import WordCNN
 
-use_gpu = False
 
 def trainer(train_loader,dev_loader, model, optimizer, criterion, epoch=1000, early_stop=3, scheduler=None):
     
@@ -27,18 +30,10 @@ def trainer(train_loader,dev_loader, model, optimizer, criterion, epoch=1000, ea
             #evaluate your model on development set every epoch
             #you are expected to achieve between 0.50 to 0.70 accuracy on development set
             ############################################
-
-            if use_gpu:
-                X = X.cuda()
-                y = y.cuda()
-
-            # zero the parameter gradients
             optimizer.zero_grad()
-
-            # forward + backward + optimize
             outputs = model(X)
-
             loss = criterion(outputs, y)
+
             loss.backward()
             optimizer.step()
 
