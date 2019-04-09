@@ -99,7 +99,7 @@ def predict(model, test_loader, save_file="submission.csv"):
     result = {'id':list(inds), "rating":preds}
     df = pd.DataFrame(result, index=result['id'])
     df.to_csv(save_file)  
-
+#a
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--lr", type=float, default=0.0005)
