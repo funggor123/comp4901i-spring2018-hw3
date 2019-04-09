@@ -315,6 +315,3 @@ def get_dataloaders(batch_size, max_len):
                                                    batch_size=batch_size,
                                                    shuffle=False)
     return data_loader_tr, data_loader_dev, data_loader_test, statistic["vocab_size"]
-
-
-train_loader, dev_loader, test_loader, vocab_size = get_dataloaders(32, 40)
