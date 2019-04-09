@@ -8,8 +8,8 @@ import torch.nn as nn
 
 from sklearn.metrics import classification_report, accuracy_score
 
-from code.preprocess import get_dataloaders
-from code.model import WordCNN
+from preprocess import get_dataloaders
+from model import WordCNN
 
 
 def trainer(train_loader,dev_loader, model, optimizer, criterion, epoch=1000, early_stop=3, scheduler=None):
