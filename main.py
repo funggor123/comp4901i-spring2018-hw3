@@ -4,12 +4,17 @@ import numpy as np
 import pickle
 import argparse
 from tqdm import tqdm
-
+import torch.optim as optim
 import torch
 import torch.nn as nn
 import torch.utils.data as data
 import torch.nn.functional as F
-
+from torch.autograd import Variable
+from torchtext.data import Field
+from torchtext import data
+from torchtext import datasets
+import gensim
+import random
 from sklearn.metrics import f1_score, classification_report, accuracy_score
 
 from preprocess import get_dataloaders
@@ -29,6 +34,14 @@ def trainer(train_loader,dev_loader, model, optimizer, criterion, epoch=1000, ea
             #write a trainer to train your CNN model
             #evaluate your model on development set every epoch
             #you are expected to achieve between 0.50 to 0.70 accuracy on development set
+            if torch.cuda.is_available():
+                X = X.cuda()
+                y = y.cuda()
+            optimizer.zero_grad()
+            output = model(X)
+            loss = criterion(output, y) 
+            loss.backward()
+            optimizer.step()
             ############################################
             loss_log.append(loss.item())
             pbar.set_description("(Epoch {}) TRAIN LOSS:{:.4f}".format((e+1), np.mean(loss_log)))
@@ -85,16 +98,40 @@ def main():
     parser.add_argument("--kernel_sizes", type=str, default='3,4,5')
     parser.add_argument("--batch_size", type=int, default=16)
     parser.add_argument("--early_stop", type=int, default=3)
-    parser.add_argument("--embed_dim", type=int, default=100)
+    parser.add_argument("--embed_dim", type=int, default=300)
     parser.add_argument("--max_len", type=int, default=200)
     parser.add_argument("--class_num", type=int, default=3)
     parser.add_argument("--lr_decay", type=float, default=0.5)
     args = parser.parse_args()
+    print("This is args", args)
     #load data
-    train_loader, dev_loader, test_loader, vocab_size = get_dataloaders(args.batch_size, args.max_len)
+    #train_loader, dev_loader, test_loader, vocab_size = get_dataloaders(args.batch_size, args.max_len)
     #build model
     # try to use pretrained embedding here
+    
+    # word embedding
+    TEXT = data.Field(tokenize = 'spacy', lower=True)
+    LABEL = data.LabelField(dtype = torch.float)
+    train_loader, test_loader = datasets.IMDB.splits(TEXT, LABEL)
+    train_loader, dev_loader = train_loader.split(random_state = random.seed(1234))
+    TEXT.build_vocab(train_loader, vectors= 'glove.42B.300d', unk_init = torch.Tensor.normal_)
+    LABEL.build_vocab(train_loader)
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    train_loader, dev_loader, test_loader = data.BucketIterator.splits(
+    (train_loader, dev_loader, test_loader), 
+    batch_size = args.batch_size, 
+    device = device)
+    vocab = TEXT.vocab
+    train_loader, dev_loader, test_loader, vocab_size = get_dataloaders(args.batch_size, args.max_len)
+    model = WordCNN(args, len(vocab), embedding_matrix=vocab.vectors)
+    
+    # the other method 
+
+
+    # not use pre trained word embedding
+    '''
     model = WordCNN(args, vocab_size, embedding_matrix=None)
+    '''
     #loss function
     criterion = nn.CrossEntropyLoss()
     #choose optimizer
