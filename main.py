@@ -73,7 +73,7 @@ def predict(model, test_loader, save_file="submission.csv"):
     logits = []
     inds = []
     model.eval()
-    for X,ind in test_loader:
+    for X, ind in test_loader:
         logit = model(X)
         logits.append(logit.data.cpu().numpy())
         inds.append(ind.data.cpu().numpy())
@@ -96,9 +96,10 @@ def main():
     parser.add_argument("--max_len", type=int, default=200)
     parser.add_argument("--class_num", type=int, default=3)
     parser.add_argument("--lr_decay", type=float, default=0.5)
+    parser.add_argument("--dynamic_pad", type=bool, default=True)
     args = parser.parse_args()
     #load data
-    train_loader, dev_loader, test_loader, vocab_size = get_dataloaders(args.batch_size, args.max_len)
+    train_loader, dev_loader, test_loader, vocab_size = get_dataloaders(args.batch_size, args.max_len, args.dynamic_pad)
     #build model
     # try to use pretrained embedding here
     model = WordCNN(args, vocab_size, embedding_matrix=None)

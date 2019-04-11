@@ -13,19 +13,6 @@ class WordCNN(nn.Module):
         self.embed = nn.Embedding(vocab_size, args.embed_dim)
         self.convs = nn.ModuleList([nn.Conv1d(args.embed_dim, args.kernel_num, kernel_size=int(k)) for k in kernel_size])
 
-        # self.conv1 = nn.Sequential(
-        #     nn.Conv1d(args.embed_dim, args.kernel_num, kernel_size=kernel_size[0],stride=1),
-        #     nn.ReLU(),
-        #     nn.MaxPool1d(kernel_size=kernel_size[0])
-        # )
-        # self.conv2 = nn.Sequential(
-        #     nn.Conv1d(args.embed_dim, args.kernel_num, kernel_size=kernel_size[1], stride=1),
-        #     nn.ReLU()
-        # )
-        # self.conv3 = nn.Sequential(
-        #     nn.Conv1d(args.embed_dim, args.kernel_num, kernel_size=kernel_size[2], stride=1),
-        #     nn.ReLU()
-        # )
         self.dropout = nn.Dropout(args.dropout)
         self.linear = nn.Linear(len(kernel_size)*args.kernel_num, args.class_num)
         #hint useful function: nn.Embedding(), nn.Dropout(), nn.Linear(), nn.Conv1d() or nn.Conv2d(),
@@ -39,4 +26,5 @@ class WordCNN(nn.Module):
         logit = [F.relu(conv(embed)) for conv in self.convs]
         logit = [F.max_pool1d(conv, conv.shape[2]).squeeze(2) for conv in logit]
         logit = self.dropout(torch.cat(logit, dim=1))
-        return F.softmax(self.linear(logit))
+        logit = self.linear(logit)
+        return F.softmax(logit, dim=1)
