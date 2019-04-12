@@ -143,7 +143,6 @@ contractions_dict = {
 def clean(string):
     string = string.strip()
     string = string.lower()
-    string = unicodedata.normalize('NFKD', string).encode('ascii', 'ignore').decode('utf-8', 'ignore')
 
     contractions_re = re.compile('(%s)' % '|'.join(contractions_dict.keys()))
 

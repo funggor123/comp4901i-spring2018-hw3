@@ -130,6 +130,49 @@ def main():
 
     print('best_dev_acc:{}'.format(best_acc))
     predict(model, test_loader)
+def tune(lr = 0.1,dropout = 0.3, kernel_num = 100, kernel_sizes = '3,4,5', embed_dim = 100 ):
+     parser = argparse.ArgumentParser()
+     parser.add_argument("--lr", type=float, default=lr)
+     parser.add_argument("--dropout", type=float, default=dropout)
+     parser.add_argument("--kernel_num", type=int, default=kernel_num)
+     parser.add_argument("--kernel_sizes", type=str, default=kernel_sizes)
+     parser.add_argument("--batch_size", type=int, default=16)
+     parser.add_argument("--early_stop", type=int, default=3)
+     parser.add_argument("--embed_dim", type=int, default=embed_dim)
+     parser.add_argument("--max_len", type=int, default=200)
+     parser.add_argument("--class_num", type=int, default=3)
+     parser.add_argument("--lr_decay", type=float, default=0.5)
+     args = parser.parse_args()
+     print("This is args", args)
+     train_loader, dev_loader, test_loader, vocab_size = get_dataloaders(args.batch_size, args.max_len)
+     model = WordCNN(args, vocab_size, embedding_matrix=None)
+     #loss function
+     criterion = nn.CrossEntropyLoss()
+     #choose optimizer
+     optimizer = torch.optim.SGD(filter(lambda p: p.requires_grad,model.parameters()), lr=args.lr)
 
+     model, best_acc = trainer(train_loader, dev_loader, model, optimizer, criterion, early_stop = args.early_stop)
+
+     print('best_dev_acc:{}'.format(best_acc))
+     predict(model, test_loader)
 if __name__=="__main__":
-    main()
+     lr = [0.1, 0.01]
+     dropout = [0, 0.1, 0.3, 0.5]
+     kernel_num = [50, 100, 150]
+     kernel_sizes = [ '2,3,4', '3,4,5', '4,5,6' ]
+     embed_dim = [50, 100, 200]
+     for _lr in lr:
+         print("Traing with different learning rate: " + str(_lr))
+         tune(lr = _lr)
+     for _dropout in dropout:
+         print("Traing with different dropout: " + str(_dropout))
+         tune(dropout=_dropout)
+     for _kernel_num in kernel_num:
+          print("Traing with different kernel_num: " + str(_kernel_num))
+          tune(kernel_num= _kernel_num)
+     for _kernel_size in kernel_sizes:
+         print("Traing with different kernel_sizes: " + _kernel_size)
+         tune(kernel_sizes= _kernel_size)
+     for _embed_num in embed_dim:
+         print("Traing with different embed_dim: " + str(_embed_num))
+         tune(embed_dim= _embed_num)
