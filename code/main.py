@@ -20,6 +20,10 @@ def trainer(train_loader,dev_loader, model, optimizer, criterion, epoch=1000, ea
         loss_log = []
         model.train()
         pbar = tqdm(enumerate(train_loader),total=len(train_loader))
+        ######
+        if use_gpu:
+            model = model.cuda()
+        #####
         for i, (X, y, ind) in pbar:
             ############################################
             #TO DO

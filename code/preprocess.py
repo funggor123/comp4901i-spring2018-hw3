@@ -3,11 +3,8 @@ import re
 import numpy as np
 import pickle
 import unicodedata
-from torchtext import datasets
 import torch
-from torchtext.vocab import GloVe
 import torch.utils.data as data
-from torchtext import data
 
 PAD_INDEX = 0
 UNK_INDEX = 1
