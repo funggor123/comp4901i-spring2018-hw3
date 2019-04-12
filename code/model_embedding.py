@@ -14,7 +14,11 @@ class WordCNN(nn.Module):
         self.ebd = int(args.embed_dim)
         self.num_filter = args.kernel_num
 
-        embedding_matrix_tensor = torch.FloatTensor(embedding_matrix)
+        if torch.cuda.is_available():
+            embedding_matrix_tensor = torch.FloatTensor(embedding_matrix).cuda()
+        else:
+            embedding_matrix_tensor = torch.FloatTensor(embedding_matrix)
+
         self.embedding = nn.Embedding.from_pretrained(embedding_matrix_tensor)
 
         self.convW_1 = nn.Conv2d(1, self.num_filter, kernel_size=(int(kernel_sizes[0]), self.ebd))

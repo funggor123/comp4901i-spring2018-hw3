@@ -11,7 +11,7 @@ from sklearn.metrics import classification_report, accuracy_score
 from preprocess import get_dataloaders
 from model import WordCNN
 
-use_gpu = False
+use_gpu = torch.cuda.is_available()
 
 def trainer(train_loader,dev_loader, model, optimizer, criterion, epoch=1000, early_stop=3, scheduler=None):
     
