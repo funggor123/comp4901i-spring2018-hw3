@@ -21,6 +21,7 @@ class WordCNN(nn.Module):
         #TO DO
         #input x dim: (batch_size, max_seq_len, D)
         #output logit dim: (batch_size, num_classes)
+
         embed = self.embed(x)
         embed = embed.permute(0, 2, 1)
         logit = [F.relu(conv(embed)) for conv in self.convs]

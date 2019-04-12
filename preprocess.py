@@ -224,12 +224,15 @@ def Lang(vocab, file_name):
                 statistic["class_distribution"].setdefault(label, 1)
             else:
                 statistic["class_distribution"][label] += 1
+
     statistic['max_len'] = np.max(sent_len_list)
+
     statistic['sent_num'] = len(list(df["id"]))
     for key, value in vocab.word2count.items():
         statistic['word_num'] += int(value)
+
     statistic['vocab_size'] = vocab.n_words
-    statistic["avg_len"] = np.sum(sent_len_list) / statistic["sent_num"]
+    statistic["avg_len"] = np.array(sent_len_list).mean()
     statistic["len_std"] = np.std(sent_len_list)
     ############################################################
     return vocab, statistic
@@ -311,22 +314,23 @@ def collate_fn(data):
     batch_split = list(zip(*data))
 
     seqs = batch_split[0]
-    print(seqs)
 
     max_length = max([len(seq) for seq in seqs])
-    padded_seqs = []
+    padded_seqs = torch.LongTensor([])
 
-    for i in range(len(seqs)):
-        print(len(seqs[i]))
+    for i in range(batch_size):
+        # print(len(seqs[i]))
         pad = max_length - len(seqs[i])
-        print('pad: ',pad)
-        padded_seqs = torch.cat([seqs[i], torch.LongTensor(torch.zeros(pad))], dim=0))
+        # print(seqs[i])
+        # padded_seqs = list(padded_seqs)
+        cat = torch.cat([seqs[i], torch.zeros(pad).type_as(seqs[i])], dim=0)
+        temp = torch.LongTensor(cat)
+        padded_seqs = torch.cat([padded_seqs, temp.view(1, max_length)], dim=0)
+        if i == 0:
+            padded_seqs = padded_seqs.view(1, max_length)
 
-
-    batch_split = [batch_split[i] for i in range(1, len(batch_split))]
+    batch_split = [torch.LongTensor(batch_split[i]) for i in range(1, len(batch_split))]
     batch_split.insert(0, padded_seqs)
-    print("------------------------------------------------------")
-    print(batch_split)
     return batch_split
 
 

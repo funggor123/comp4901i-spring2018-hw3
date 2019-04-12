@@ -96,7 +96,7 @@ def main():
     parser.add_argument("--max_len", type=int, default=200)
     parser.add_argument("--class_num", type=int, default=3)
     parser.add_argument("--lr_decay", type=float, default=0.5)
-    parser.add_argument("--dynamic_pad", type=bool, default=True)
+    parser.add_argument("--dynamic_pad", type=bool, default=False)
     args = parser.parse_args()
     #load data
     train_loader, dev_loader, test_loader, vocab_size = get_dataloaders(args.batch_size, args.max_len, args.dynamic_pad)
