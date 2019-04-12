@@ -3,11 +3,8 @@ import re
 import numpy as np
 import pickle
 import unicodedata
-from torchtext import datasets
 import torch
-from torchtext.vocab import GloVe
 import torch.utils.data as data
-from torchtext import data
 import gensim
 
 PAD_INDEX = 0
@@ -178,15 +175,9 @@ def clean(string):
 
 class Vocab():
     def __init__(self):
-        self.word2Vector = gensim.models.KeyedVectors.load_word2vec_format('GoogleNews-vectors-negative300.bin', binary=True)
+        self.word2Vector = gensim.models.KeyedVectors.load_word2vec_format('GoogleNews-vectors-negative300.bin', binary=True, limit=500000)
         self.no_of_vocab = len(self.word2Vector.wv.vectors)
-        word2idx = {"PAD": 0}
-        vocab_list = [(k, self.word2Vector.wv[k]) for k, v in self.word2Vector.wv.vocab.items()]
-        self.embeddings_matrix = np.zeros((len(self.word2Vector.wv.vocab.items()) + 1, self.word2Vector.vector_size))
-        for i in range(len(vocab_list)):
-            word = vocab_list[i][0]
-            word2idx[word] = i + 1
-            self.embeddings_matrix[i + 1] = vocab_list[i][1]
+        self.embeddings_matrix = self.word2Vector.wv.vectors
 
 class Dataset(data.Dataset):
     """Custom data.Dataset compatible with data.DataLoader."""
@@ -212,8 +203,8 @@ class Dataset(data.Dataset):
         return self.num_total_seqs
 
     def tokenize(self, sentence):
-        return [self.vocab.word2index[word] if word in self.vocab.word2index else
-                self.vocab.word2index[self.vocab.word2index.most_similar(word)] for word in sentence]
+        return [self.vocab.word2Vector.vocab.get(word).index if word in self.vocab.word2Vector.vocab else
+                self.vocab.word2Vector.vocab.get("0").index for word in sentence]
 
 
 def preprocess(filename, max_len=200, test=False):
@@ -234,7 +225,7 @@ def preprocess(filename, max_len=200, test=False):
         if sent_len > max_len:
             content.append(sentence[:max_len])
         else:
-            content.append(sentence + ["PAD"] * (max_len - sent_len))
+            content.append(sentence + ["0"] * (max_len - sent_len))
 
     if test:
         len(id_) == len(content)
