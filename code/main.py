@@ -53,6 +53,11 @@ def trainer(train_loader,dev_loader, model, optimizer, criterion, epoch=1000, ea
         logits = []
         ys = []
         for X,y,ind in dev_loader:
+            ##########
+            if use_gpu:
+                X = X.cuda()
+                y = y.cuda()
+            #######
             logit = model(X)
             logits.append(logit.data.cpu().numpy())
             ys.append(y.data.cpu().numpy())
@@ -83,6 +88,10 @@ def predict(model, test_loader, save_file="submission.csv"):
     inds = []
     model.eval()
     for X,ind in test_loader:
+        ###
+        if use_gpu:
+            X = X.cuda()
+        ###
         logit = model(X)
         logits.append(logit.data.cpu().numpy())
         inds.append(ind.data.cpu().numpy())
