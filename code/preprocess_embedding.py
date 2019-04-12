@@ -8,6 +8,7 @@ import torch
 from torchtext.vocab import GloVe
 import torch.utils.data as data
 from torchtext import data
+import gensim
 
 PAD_INDEX = 0
 UNK_INDEX = 1
@@ -175,72 +176,17 @@ def clean(string):
     string = re.compile('[\\x00-\\x08\\x0b-\\x0c\\x0e-\\x1f]').sub('', string)
     return string
 
-
 class Vocab():
     def __init__(self):
-        self.word2index = {"PAD": PAD_INDEX, "UNK": UNK_INDEX}
-        self.word2count = {}
-        self.index2word = {PAD_INDEX: "PAD", UNK_INDEX: "UNK"}
-        self.n_words = 2  # Count default tokens
-        self.word_num = 0
-
-    def index_words(self, sentence):
-        for word in sentence:
-            self.word_num += 1
-            if word not in self.word2index:
-                self.word2index[word] = self.n_words
-                self.index2word[self.n_words] = word
-                self.word2count[word] = 1
-                self.n_words += 1
-            else:
-                self.word2count[word] += 1
-
-
-def Lang(vocab, file_name):
-    statistic = {"sent_num": 0, "word_num": 0, "vocab_size": 0, "max_len": 0, "avg_len": 0, "len_std": 0,
-                 "class_distribution": {}}
-    df = pd.read_csv(file_name)
-
-    sent_len_list = []
-    ############################################################
-    # TO DO
-    # build vocabulary and statistic
-
-    # 1. Number of sentences
-    statistic["sent_num"] = len(df)
-
-    # Build Vocab
-    for sent in df['content']:
-        sent = clean(str(sent)).split()
-        vocab.index_words(sent)
-        sent_len_list.append(len(sent))
-
-    # 2. Number of words
-    statistic['word_num'] = vocab.word_num
-
-    # 3. Number of unique words
-    statistic['vocab_size'] = vocab.n_words
-
-    # 4. Most Frequent Words
-    statistic['frequent_word'] = sorted(vocab.word2count.items(), key=
-    lambda kv: (kv[1], kv[0]), reverse=True)[0:10]
-
-    # 5. Maximum Number of words in the sentences
-    statistic["max_len"] = sorted(sent_len_list)[-1]
-
-    # 6. Sentence Length Mean
-    statistic["avg_len"] = np.array(sent_len_list).mean()
-
-    # 7. Sentence Length Std
-    statistic["len_std"] = np.array(sent_len_list).std()
-
-    # 8. Distrubution of Classes
-
-    ## TODO Distrubution of Classes
-
-    ############################################################
-    return vocab, statistic
-
+        self.word2Vector = gensim.models.KeyedVectors.load_word2vec_format('GoogleNews-vectors-negative300.bin', binary=True)
+        self.no_of_vocab = len(self.word2Vector.wv.vectors)
+        word2idx = {"PAD": 0}
+        vocab_list = [(k, self.word2Vector.wv[k]) for k, v in self.word2Vector.wv.vocab.items()]
+        self.embeddings_matrix = np.zeros((len(self.word2Vector.wv.vocab.items()) + 1, self.word2Vector.vector_size))
+        for i in range(len(vocab_list)):
+            word = vocab_list[i][0]
+            word2idx[word] = i + 1
+            self.embeddings_matrix[i + 1] = vocab_list[i][1]
 
 class Dataset(data.Dataset):
     """Custom data.Dataset compatible with data.DataLoader."""
@@ -266,7 +212,8 @@ class Dataset(data.Dataset):
         return self.num_total_seqs
 
     def tokenize(self, sentence):
-        return [self.vocab.word2index[word] if word in self.vocab.word2index else UNK_INDEX for word in sentence]
+        return [self.vocab.word2index[word] if word in self.vocab.word2index else
+                self.vocab.word2index[self.vocab.word2index.most_similar(word)] for word in sentence]
 
 
 def preprocess(filename, max_len=200, test=False):
@@ -299,7 +246,6 @@ def preprocess(filename, max_len=200, test=False):
 
 def get_dataloaders(batch_size, max_len):
     vocab = Vocab()
-    vocab, statistic = Lang(vocab, "train.csv")
 
     train_data = preprocess("train.csv", max_len)
     dev_data = preprocess("dev.csv", max_len)
@@ -307,7 +253,7 @@ def get_dataloaders(batch_size, max_len):
     train = Dataset(train_data, vocab)
     dev = Dataset(dev_data, vocab)
     test = Dataset(test_data, vocab)
-    print(statistic)
+
     data_loader_tr = torch.utils.data.DataLoader(dataset=train,
                                                  batch_size=batch_size,
                                                  shuffle=True)
@@ -317,5 +263,5 @@ def get_dataloaders(batch_size, max_len):
     data_loader_test = torch.utils.data.DataLoader(dataset=test,
                                                    batch_size=batch_size,
                                                    shuffle=False)
-    return data_loader_tr, data_loader_dev, data_loader_test, statistic["vocab_size"]
+    return data_loader_tr, data_loader_dev, data_loader_test, vocab.embeddings_matrix
 
