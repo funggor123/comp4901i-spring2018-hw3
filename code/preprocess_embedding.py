@@ -175,7 +175,7 @@ def clean(string):
 
 class Vocab():
     def __init__(self):
-        self.word2Vector = gensim.models.KeyedVectors.load_word2vec_format('GoogleNews-vectors-negative300.bin', binary=True, limit=500000)
+        self.word2Vector = gensim.models.KeyedVectors.load_word2vec_format('GoogleNews-vectors-negative300.bin', binary=True, limit=100000)
         self.no_of_vocab = len(self.word2Vector.wv.vectors)
         self.embeddings_matrix = self.word2Vector.wv.vectors
 
