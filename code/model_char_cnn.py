@@ -60,6 +60,7 @@ class CharCNN(nn.Module):
         )
 
         self.fc3 = nn.Linear(1024, int(args.class_num))
+        self.dropout = nn.Dropout(p=int(args.dropout))
 
     def forward(self, x):
         # TO DO
@@ -82,6 +83,7 @@ class CharCNN(nn.Module):
 
         # linear layer
         x = self.fc1(x)
+        x = self.dropout(x)
         # linear layer
         x = self.fc2(x)
         # linear layer

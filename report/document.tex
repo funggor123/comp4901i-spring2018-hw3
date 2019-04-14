@@ -146,20 +146,20 @@ The following are the results of the final training with the best hyperparameter
 \end{table}
 
 \subsection{Analysis}
-For ths size of filters, a larger size kernel can overlook at the features and could skip the essential details in the input whereas a smaller size kernel could provide more information leading to more confusion. From the results,
+For ths size of filters, we found out that the smaller the kernel size, the better the best development accuracy. Since a larger size kernel can overlook at the features and could skip the essential details in the input whereas a smaller size kernel could provide more information leading to more confusion. 
 
-For the number of filter, the more the number of filter, the more of different convolution. 
+For the number of filter, we found out that the number of filter should not be too much and too little. Since the more the number of filters, the more the different convolutions which allow neural network to learn more different features. However, too much filter cause the neural network to difficult to converge. On the other hand, too little filters may cause the neural network to have enough ability to learn different features.
 
-For the dropout, we found out that, the it requires more time to converge . The reason for that may be due to dropout forces a neural network to learn more robust features that are useful in conjunction with many different random subsets of the other neurons. And sometimes, 
+For the dropout probability, we found out that, the higher the dropout probability. it requires more time to converge . The reason for that may be due the neural network require more time learn the robust features by  ropout forces. And also we found out that for better best development accuracy, the dropout probability should not be too high and too low. Too high will cause the neural network to difficult to converge. To low will cause the neural network cannot generalize well. According to the results in this assignment, 0.3 is the best.
 
-For the learning rate, we found out that the lower the value, the slower the convergence. On the other hand, the higher the learning rate, the faster the convergence. However, high learning rate also earlier cause early stop.
+For the learning rate, we found out that the lower the value, the slower the convergence. On the other hand, the higher the learning rate, the faster the convergence. However, high learning rate also earlier cause early stop. This may because the learning rate too large which cause the gradient descent overshot. Therefore, although low learning rate is slower, It slowly converge to optimal and get better best accuracy. According to the results in this assignment, 0.01 is the best.
 
-For comparison between max pooing and average pooling, we found out that average pooling perform better max pooling. Since the max pooling rejects a big chunk of data and retains the max. Average pooling on the other hand, do not reject all of it and retains more information. Because of that sometimes the variance in a max pooling is not significant.
+For comparison between max pooing and average pooling, we found out that max pooling perform better average pooling. According to the results in this assignment, the Best Accuracy for max pooling is higher than average pooling.
 
 \section{Bonus}
 
 \subsection{Dynamic Padding}
-For Dynamic Padding, we have defined our custom \textbf{collate\_fn()} function to process the batch by dynamicially padding the batch with maximum length of the embedding in that batch. Defining our custom \textbf{collate\_fn()} can be flexibly process the batch.
+For Dynamic Padding, we have defined our custom \textbf{collate\_fn()} function to process the batch by dynamicially padding the batch with maximum length of the embedding in that batch. Defining our custom \textbf{collate\_fn()} can be flexibly process the batch. \textbf{(This bonus are implemented in the files with postfix \_char\_dynamic\_pad.py)}
 
 \begin{table}[htb]
 	\caption{Best Development Accuracy of Using Dynamic Padding}
@@ -170,14 +170,15 @@ For Dynamic Padding, we have defined our custom \textbf{collate\_fn()} function 
 		\cmidrule{1-2}
 		Dataset & Best Accuracy\\
 		\midrule
-		Development Set & 0.57  \\
+		Development Set & 0.598  \\
 		\bottomrule
 	\end{tabular}
 \end{table}
 
 
 \subsection{Pretrained Word Embedding}
-For Pretrained Word Embedding, we have tried to replace the original word embedding layer by the pretrained \textbf{word2Vector} with \textbf{Google News corpus} (3 billion running words) word vector model. (Google News Corpus: https://github.com/mmihaltz/word2vec-GoogleNews-vectors). And since the dimension of the embedding matrix is enormously big which cause some memory error during training, we have limited to only use ten thousands of vocabs. All above process can be easily done through by a python libarary named \textbf{gensim}. And the following are the results of using pretrained embedding.
+For Pretrained Word Embedding, we have tried to replace the original word embedding layer by the pretrained \textbf{word2Vector} with \textbf{Google News corpus} (3 billion running words) word vector model. (Google News Corpus: https://github.com/mmihaltz/word2vec-GoogleNews-vectors). And since the dimension of the embedding matrix is enormously big which cause some memory error during training, we have limited to only use ten thousands of vocabs. All above process can be easily done through by a python libarary named \textbf{gensim}. And the following are the results of using pretrained embedding. \textbf{(This bonus are implemented in the files with postfix \_embedding.py)}
+
 
 \begin{table}[htb]
 	\caption{Best Development Accuracy of Using Pretained Word Embedding}
@@ -199,7 +200,7 @@ For other CNN archiectures, we have implmented character CNN by following the pa
 
 Same as the paper, we have defined a list of characters which includes 26 English letters, 10 digits, 34 special characters and one blank characters. (\textbf{70 Characters in total})
 
-In the later part, we transfer those characters as 1-hot encoding and use it to create the sentence vectors for each sentences. For unknown characters, blank characters are used to replace it. The sentence vectors would then be inputed into the CNN with the following archiecture which is quite similiar to the paper.
+In the later part, we transfer those characters as 1-hot encoding and use it to create the sentence vectors for each sentences. For unknown characters, blank characters are used to replace it. The sentence vectors would then be inputed into the CNN with the following archiecture which is quite similiar to the paper.  \textbf{(This bonus are implemented in the files with postfix \_char\_cnn.py)}
 
 \begin{table}[htb]
 \caption{Char CNN Archiecture we used}

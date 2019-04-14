@@ -103,12 +103,11 @@ def predict(model, test_loader, save_file="submission.csv"):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--lr", type=float, default=0.0005)
-    parser.add_argument("--dropout", type=float, default=0.5)
+    parser.add_argument("--dropout", type=float, default=0.3)
     parser.add_argument("--kernel_num", type=int, default=100)
-    parser.add_argument("--kernel_sizes", type=str, default='3,4,5')
-    parser.add_argument("--batch_size", type=int, default=128)
+    parser.add_argument("--batch_size", type=int, default=16)
     parser.add_argument("--early_stop", type=int, default=200)
-    parser.add_argument("--embed_dim", type=int, default=100)
+    parser.add_argument("--embed_dim", type=int, default=50)
     ### Need to reDefine the number of input unit in the linear layer in model.char.cnn.py ###
     parser.add_argument("--max_len", type=int, default=650)
     parser.add_argument("--class_num", type=int, default=3)
