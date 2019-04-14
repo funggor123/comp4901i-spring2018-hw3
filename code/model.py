@@ -11,17 +11,16 @@ class WordCNN(nn.Module):
         # hint useful function: nn.Embedding(), nn.Dropout(), nn.Linear(), nn.Conv1d() or nn.Conv2d(),
 
         kernel_sizes = args.kernel_sizes.split(",")
-        self.ebd = int(args.embed_dim)
-        self.num_filter = args.kernel_num
+        self.embedding_dim = int(args.embed_dim)
+        self.num_of_filters = args.kernel_num
 
-        self.embedding = nn.Embedding(vocab_size, self.ebd)
-        self.convW_1 = nn.Conv2d(1, self.num_filter, kernel_size=(int(kernel_sizes[0]), self.ebd))
-        self.convW_2 = nn.Conv2d(1, self.num_filter, kernel_size=(int(kernel_sizes[1]), self.ebd))
-        self.convW_3 = nn.Conv2d(1, self.num_filter, kernel_size=(int(kernel_sizes[2]), self.ebd))
+        self.embedding = nn.Embedding(vocab_size, self.embedding_dim)
+        self.conv1 = nn.Conv2d(1, self.num_of_filters, kernel_size=(int(kernel_sizes[0]), self.embedding_dim))
+        self.conv2 = nn.Conv2d(1, self.num_of_filters, kernel_size=(int(kernel_sizes[1]), self.embedding_dim))
+        self.conv3 = nn.Conv2d(1, self.num_of_filters, kernel_size=(int(kernel_sizes[2]), self.embedding_dim))
 
         self.dropout = nn.Dropout(p=int(args.dropout))
-        self.linear = nn.Linear(self.num_filter*3, int(args.class_num))
-
+        self.linear = nn.Linear(self.num_of_filters * 3, int(args.class_num))
 
     def forward(self, x):
         # TO DO
@@ -31,23 +30,23 @@ class WordCNN(nn.Module):
         ebd = self.embedding(x)
         ebd = ebd.unsqueeze(1)
 
-        f1 = self.convW_1(ebd)
-        f2 = self.convW_2(ebd)
-        f3 = self.convW_3(ebd)
+        f1 = self.conv1(ebd)
+        f2 = self.conv2(ebd)
+        f3 = self.conv3(ebd)
 
-        output = F.max_pool2d(f1, kernel_size=(f1.shape[2], f1.shape[3]))
-        output = F.relu(output)
-        output = output.squeeze(3).squeeze(2)
+        out1 = F.max_pool2d(f1, kernel_size=(f1.shape[2], f1.shape[3]))
+        out1 = F.relu(out1)
+        out1 = out1.squeeze(3).squeeze(2)
 
-        output2 = F.max_pool2d(f2, kernel_size=(f2.shape[2], f2.shape[3]))
-        output2 = F.relu(output2)
-        output2 = output2.squeeze(3).squeeze(2)
+        out2 = F.max_pool2d(f2, kernel_size=(f2.shape[2], f2.shape[3]))
+        out2 = F.relu(out2)
+        out2 = out2.squeeze(3).squeeze(2)
 
-        output3 = F.max_pool2d(f3, kernel_size=(f3.shape[2], f3.shape[3]))
-        output3 = F.relu(output3)
-        output3 = output3.squeeze(3).squeeze(2)
+        out3 = F.max_pool2d(f3, kernel_size=(f3.shape[2], f3.shape[3]))
+        out3 = F.relu(out3)
+        out3 = out3.squeeze(3).squeeze(2)
 
-        concat = torch.cat([output, output2, output3], 1)
+        concat = torch.cat([out1, out2, out3], 1)
 
         out = self.dropout(concat)
         out = self.linear(out)

@@ -109,6 +109,7 @@ def main():
     parser.add_argument("--lr", type=float, default=0.01)
     parser.add_argument("--dropout", type=float, default=0.3)
     parser.add_argument("--kernel_num", type=int, default=100)
+    parser.add_argument("--dynamic_pad", type=float, default=True)
     parser.add_argument("--kernel_sizes", type=str, default='2,3,4')
     parser.add_argument("--batch_size", type=int, default=16)
     parser.add_argument("--early_stop", type=int, default=10)
@@ -116,7 +117,7 @@ def main():
     parser.add_argument("--max_len", type=int, default=200)
     parser.add_argument("--class_num", type=int, default=3)
     parser.add_argument("--lr_decay", type=float, default=0.5)
-    parser.add_argument("--dynamic_pad", type=float, default=True)
+
     args = parser.parse_args()
     # load data
     train_loader, dev_loader, test_loader, vocab_size = get_dataloaders(args.batch_size, args.max_len, args.dynamic_pad)

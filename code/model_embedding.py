@@ -2,6 +2,10 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+'''
+Pretrain - Embedding Model
+'''
+
 
 class WordCNN(nn.Module):
 
@@ -26,8 +30,7 @@ class WordCNN(nn.Module):
         self.convW_3 = nn.Conv2d(1, self.num_filter, kernel_size=(int(kernel_sizes[2]), self.ebd))
 
         self.dropout = nn.Dropout(p=int(args.dropout))
-        self.linear = nn.Linear(self.num_filter*3, int(args.class_num))
-
+        self.linear = nn.Linear(self.num_filter * 3, int(args.class_num))
 
     def forward(self, x):
         # TO DO
@@ -59,6 +62,3 @@ class WordCNN(nn.Module):
         out = self.linear(out)
 
         return out
-
-
-

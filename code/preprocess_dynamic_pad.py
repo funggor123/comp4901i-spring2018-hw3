@@ -280,14 +280,15 @@ def preprocess(filename, dynamic_pad, max_len=200, test=False):
         sent_len = len(sentence)
         # here we pad the sequence for whole training set, you can also try to do dynamic padding for each batch by customize collate_fn function
         # if you do dynamic padding and report it, we will give 1 points bonus
-        if dynamic_pad:
-            content.append(sentence)
-        else:
-
+        if not dynamic_pad:
             if sent_len>max_len:
                 content.append(sentence[:max_len])
             else:
                 content.append(sentence+["PAD"]*(max_len-sent_len))
+        else:
+            content.append(sentence)
+
+
 
     if test:
         len(id_) == len(content)
@@ -311,24 +312,24 @@ def preprocess(filename, dynamic_pad, max_len=200, test=False):
 
 def collate_fn(data):
     batch_size = len(data)
-    batch_split = list(zip(*data))
+    splited_batch = list(zip(*data))
 
-    seqs = batch_split[0]
+    seqs = splited_batch[0]
 
     max_length = max([len(seq) for seq in seqs])
-    padded_seqs = torch.LongTensor([])
+    padded_seqs_tensor = torch.LongTensor([])
 
     for i in range(batch_size):
-        pad = max_length - len(seqs[i])
-        cat = torch.cat([seqs[i], torch.zeros(pad).type_as(seqs[i])], dim=0)
-        temp = torch.LongTensor(cat)
-        padded_seqs = torch.cat([padded_seqs, temp.view(1, max_length)], dim=0)
+        number_of_pad = max_length - len(seqs[i])
+        cat_tensor = torch.cat([seqs[i], torch.zeros(number_of_pad).type_as(seqs[i])], dim=0)
+        temp_tensor = torch.LongTensor(cat_tensor)
+        padded_seqs_tensor = torch.cat([padded_seqs_tensor, temp_tensor.view(1, max_length)], dim=0)
         if i == 0:
-            padded_seqs = padded_seqs.view(1, max_length)
+            padded_seqs_tensor = padded_seqs_tensor.view(1, max_length)
 
-    batch_split = [torch.LongTensor(batch_split[i]) for i in range(1, len(batch_split))]
-    batch_split.insert(0, padded_seqs)
-    return batch_split
+    splited_batch = [torch.LongTensor(splited_batch[i]) for i in range(1, len(splited_batch))]
+    splited_batch.insert(0, padded_seqs_tensor)
+    return splited_batch
 
 
 def get_dataloaders(batch_size, max_len, dynamic_pad):

@@ -7,6 +7,11 @@ import torch.utils.data as data
 PAD_INDEX = 0
 UNK_INDEX = 1
 
+'''
+Vocab Class for Char-CNN
+'''
+
+
 class Vocab():
     def __init__(self):
         alphabet = " abcdefghijklmnopqrstuvwxyz0123456789,;.!?:'\"/\\|_@#$%^&*~`+-=<>()[]{}"
@@ -15,7 +20,7 @@ class Vocab():
         self.no_vocab = 1
         for i, char in enumerate(alphabet):
             self.char_dict[char] = self.default_words + i
-            self.no_vocab +=1
+            self.no_vocab += 1
 
 
 def clean(string):
@@ -47,10 +52,10 @@ def preprocess(filename, max_len=4000, test=False):
             content.append(sentence + [" "] * (max_len - sent_len))
 
     # 6. Sentence Length Mean
-    print("avg " +  str(np.array(sent_len_list).mean()))
+    print("avg " + str(np.array(sent_len_list).mean()))
 
     # 7. Sentence Length Std
-    print("std " +  str(np.array(sent_len_list).std()))
+    print("std " + str(np.array(sent_len_list).std()))
     if test:
         len(id_) == len(content)
         return (id_, content, None)
@@ -106,5 +111,3 @@ def get_dataloaders(batch_size, max_len):
                                                    batch_size=batch_size,
                                                    shuffle=False)
     return data_loader_tr, data_loader_dev, data_loader_test, vocab.no_vocab
-
-
