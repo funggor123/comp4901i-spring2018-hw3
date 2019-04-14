@@ -15,7 +15,7 @@ def tune(lr=0.1, dropout=0.3, kernel_num=100, kernel_sizes='3,4,5', embed_dim=10
     parser.add_argument("--kernel_num", type=int, default=kernel_num)
     parser.add_argument("--kernel_sizes", type=str, default=kernel_sizes)
     parser.add_argument("--batch_size", type=int, default=16)
-    parser.add_argument("--early_stop", type=int, default=1)
+    parser.add_argument("--early_stop", type=int, default=10)
     parser.add_argument("--embed_dim", type=int, default=embed_dim)
     parser.add_argument("--max_len", type=int, default=200)
     parser.add_argument("--class_num", type=int, default=3)
