@@ -195,7 +195,7 @@ class Vocab():
 
 
 def Lang(vocab, file_name):
-    statistic = {"sent_num": 0, "word_num": 0, "vocab_size": 0, "max_len": 0, "avg_len": 0, "len_std": 0,
+    statistic = {"sent_num": 0, "word_num": 0, "vocab_size_>3": 0, "max_len": 0, "avg_len": 0, "len_std": 0,
                  "class_distribution": {}}
     df = pd.read_csv(file_name)
 
@@ -209,17 +209,25 @@ def Lang(vocab, file_name):
     statistic["sent_num"] = len(df)
 
     # Build Vocab
+    i = 0
     for sent in df['content']:
         sent = clean(str(sent)).split()
         vocab.index_words(sent)
         sent_len_list.append(len(sent))
-        rating.append(int[df["rating"][i]])
+        rating.append(int(df["rating"][i]))
+        i += 1
 
     # 2. Number of words
     statistic['word_num'] = vocab.word_num
 
     # 3. Number of unique words
     statistic['vocab_size'] = vocab.n_words
+
+    # 3. Number of unique words && > 3
+    for voca in vocab.word2index:
+        if voca is not "UNK" and voca is not "PAD":
+            if vocab.word2count[voca] > 3:
+                statistic['vocab_size_>3'] += 1
 
     # 4. Most Frequent Words
     statistic['frequent_word'] = sorted(vocab.word2count.items(), key=
@@ -235,7 +243,8 @@ def Lang(vocab, file_name):
     statistic["len_std"] = np.array(sent_len_list).std()
 
     # 8. Class Disturbution
-    statistic["class_distribution"] = collections.Counter(rating)
+    for key, value in collections.Counter(rating).items():
+        statistic["class_distribution"][key] = value
 
     ############################################################
     return vocab, statistic
@@ -317,4 +326,3 @@ def get_dataloaders(batch_size, max_len):
                                                    batch_size=batch_size,
                                                    shuffle=False)
     return data_loader_tr, data_loader_dev, data_loader_test, statistic["vocab_size"]
-

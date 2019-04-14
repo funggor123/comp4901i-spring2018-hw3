@@ -23,7 +23,7 @@
 \usepackage{microtype}      % microtypography
 \usepackage{graphicx}
 
-\title{COMP4901I - Opinion Mining Report}
+\title{COMP4901I - BIIS - Assignment 3 Report}
 
 \author{%
 	Cheng Chi Fung \\
@@ -54,28 +54,29 @@ The following are the data statistics of the dataset given.
 		Number of sentence & 10000 \\
 		Number of words & 1195793  \\
 		Number of vocabs & 23602 \\
+		Number of vocabs with minimum Frequency 3 & 8798 \\
 		Frequent words & the, i, to, a, and, it,  is, of, not, for \\
 		Max sentence length & 2186  \\
 		Average sentence length & 119.5793  \\
 		Std sentence length & 137.5261 \\
-		Class distrubution & r \\
+		Class distrubution & {0:4000, 1:2000, 2:4000} \\
 		\bottomrule
 	\end{tabular}
 \end{table}
 
 \section{Implement ConvNet with PyTorch}
 
-\subsection{Embedding Reuslts}
-The following are the embedding results.
+\subsection{Using Word Embeddings}
+The following are the results of using word embeddings.
 
 \begin{table}[htb]
-	\caption{Accuracy of Embedding}
+	\caption{Best Development Accuracy of Using Embedding}
 	\label{sample-table}
 	\centering
 	\begin{tabular}{ll}
 		\toprule
 		\cmidrule{1-2}
-		Dataset &Accuracy\\
+		Dataset & Best Accuracy\\
 		\midrule
 		Development Set & 0.63   \\
 		\bottomrule
@@ -108,16 +109,16 @@ The following are the hyperparameters tuning results.
 
 \section{Results and Analysis}
 
-\subsection{Development Set}
+\subsection{Development Set Accuracy}
 
 \begin{table}[htb]
-	\caption{Accuracy for final training}
+	\caption{Best Development Accuracy in final training}
 	\label{sample-table}
 	\centering
 	\begin{tabular}{ll}
 		\toprule
 		\cmidrule{1-2}
-		Dataset & Accuracy\\
+		Dataset & Best Accuracy\\
 		\midrule
 		Development Set & 0.634   \\
 		\bottomrule
@@ -141,13 +142,13 @@ For comparison between max pooing and average pooling, we found out that average
 For Dynamic Padding, I have defined my own \textbf{collate\_fn()} to process the batch by dynamicially padding the batch with maximum length of the embedding inside that batch. Instead of just maximum length of a batch, defining my own \textbf{collate\_fn()} can be more flexibly process the batch since I can also handle some other problems caused by the batch with different length.
 
 \begin{table}[htb]
-	\caption{Accuracy of using dynamic padding}
+	\caption{Best Development Accuracy of Using Dynamic Padding}
 	\label{sample-table}
 	\centering
 	\begin{tabular}{ll}
 		\toprule
 		\cmidrule{1-2}
-		Dataset &Accuracy\\
+		Dataset & Best Accuracy\\
 		\midrule
 		Development Set & 0.57  \\
 		\bottomrule
@@ -159,13 +160,13 @@ For Dynamic Padding, I have defined my own \textbf{collate\_fn()} to process the
 For Pretrained Word Embedding, we have tried to replace the original word embedding layer by the pretrained \textbf{word2Vector} with \textbf{Google News corpus} (3 billion running words) word vector model. (Google News Corpus: https://github.com/mmihaltz/word2vec-GoogleNews-vectors). And since the dimension of the embedding matrix is enormously big which cause some memory error during training, we have limited to only use ten thousands of vocabs. All above process can be easily done through by a python libarary named \textbf{gensim}. And the following are the results of using pretrained embedding.
 
 \begin{table}[htb]
-	\caption{Accuracy of using Pretained Word Embedding}
+	\caption{Best Development Accuracy of Using Pretained Word Embedding}
 	\label{sample-table}
 	\centering
 	\begin{tabular}{ll}
 		\toprule
 		\cmidrule{1-2}
-		Dataset &Accuracy\\
+		Dataset & Best Accuracy\\
 		\midrule
 		Development Set & 0.6011  \\
 		\bottomrule
@@ -207,13 +208,13 @@ In the later part, we transfer those characters as 1-hot encoding and use it to 
 And the following are the results of using Char CNN. 
 
 \begin{table}[htb]
-	\caption{Accuracy of using char CNN as our model}
+	\caption{Best Development Accuracy of Using Char CNN}
 	\label{sample-table}
 	\centering
 	\begin{tabular}{ll}
 		\toprule
 		\cmidrule{1-2}
-		Dataset &Accuracy\\
+		Dataset & Best Accuracy\\
 		\midrule
 		Development Set & 0.6312  \\
 		\bottomrule

@@ -1,0 +1,24 @@
+Traing with different learning rate: 0.1
+This is args Namespace(batch_size=16, class_num=3, dropout=0.3, early_stop=100, embed_dim=100, kernel_num=100, kernel_sizes='3,4,5', lr=0.1, lr_decay=0.5, max_len=200)
+Traceback (most recent call last):
+  File "code/main_tune.py", line 51, in <module>
+    tune(lr = _lr)
+  File "code/main_tune.py", line 25, in tune
+    train_loader, dev_loader, test_loader, vocab_size = get_dataloaders(args.batch_size, args.max_len)
+  File "/home/cheng/Desktop/HW3/comp4901i-spring2018-hw3/code/preprocess.py", line 299, in get_dataloaders
+    vocab, statistic = Lang(vocab, "train.csv")
+  File "/home/cheng/Desktop/HW3/comp4901i-spring2018-hw3/code/preprocess.py", line 199, in Lang
+    df = pd.read_csv(file_name)
+  File "/home/cheng/.local/lib/python3.5/site-packages/pandas/io/parsers.py", line 678, in parser_f
+    return _read(filepath_or_buffer, kwds)
+  File "/home/cheng/.local/lib/python3.5/site-packages/pandas/io/parsers.py", line 440, in _read
+    parser = TextFileReader(filepath_or_buffer, **kwds)
+  File "/home/cheng/.local/lib/python3.5/site-packages/pandas/io/parsers.py", line 787, in __init__
+    self._make_engine(self.engine)
+  File "/home/cheng/.local/lib/python3.5/site-packages/pandas/io/parsers.py", line 1014, in _make_engine
+    self._engine = CParserWrapper(self.f, **self.options)
+  File "/home/cheng/.local/lib/python3.5/site-packages/pandas/io/parsers.py", line 1708, in __init__
+    self._reader = parsers.TextReader(src, **kwds)
+  File "pandas/_libs/parsers.pyx", line 384, in pandas._libs.parsers.TextReader.__cinit__
+  File "pandas/_libs/parsers.pyx", line 695, in pandas._libs.parsers.TextReader._setup_parser_source
+FileNotFoundError: File b'train.csv' does not exist
