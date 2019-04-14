@@ -37,7 +37,7 @@
 \section{Data}
 
 \subsection{Data Cleaning}
-In this assignments, the following data cleaning methods is used. First, turn all the string into lower case and turn all of them into ascii encoding. It is followed by expanding the contradiction. Morverover, we remove all the digits and special characters.
+In this assignments, first, we turn all the strings into lower case and encode with ASCII. It is followed by expanding the contradiction and remove all the digits and special characters.
 
 \subsection{Data Statistics}
 The following are the data statistics of the dataset given.
@@ -51,22 +51,25 @@ The following are the data statistics of the dataset given.
 		\cmidrule{1-2}
 		Statistics & --  \\
 		\midrule
-		Number of sentence & 1 \\
-		Number of words & 2  \\
-		Number of vocabs & 3 \\
-		Frequent words & 4  \\
-		Max sentence length & 5  \\
-		Average sentence length & 6  \\
-		Std sentence length & 7  \\
+		Number of sentence & 10000 \\
+		Number of words & 1195793  \\
+		Number of vocabs & 23602 \\
+		Frequent words & the, i, to, a, and, it,  is, of, not, for \\
+		Max sentence length & 2186  \\
+		Average sentence length & 119.5793  \\
+		Std sentence length & 137.5261 \\
+		Class distrubution & r \\
 		\bottomrule
 	\end{tabular}
 \end{table}
 
 \section{Implement ConvNet with PyTorch}
-The following are the data statistics of the dataset given.
+
+\subsection{Embedding Reuslts}
+The following are the embedding results.
 
 \begin{table}[htb]
-	\caption{Development accuracy and Test Set accuracy}
+	\caption{Accuracy of Embedding}
 	\label{sample-table}
 	\centering
 	\begin{tabular}{ll}
@@ -74,8 +77,7 @@ The following are the data statistics of the dataset given.
 		\cmidrule{1-2}
 		Dataset &Accuracy\\
 		\midrule
-		Test Set & 0.01   \\
-		Development Set & 0.01  \\
+		Development Set & 0.63   \\
 		\bottomrule
 	\end{tabular}
 \end{table}
@@ -84,15 +86,20 @@ The following are the data statistics of the dataset given.
 The following are the hyperparameters tuning results.
 
 \begin{table}[htb]
-	\caption{Char CNN Archiecture we used}
+	\caption{Hyperparameter tuning results}
 	\label{sample-table}
 	\centering
 	\begin{tabular}{lllllll}
 		\toprule
 		\cmidrule{1-7}
-		Pooling Types & Learning Rate & Kernel Size & Dropout rate & Embedding Dimension 	& Number of Filters & Results\\
+		Pooling Types & Learning Rate & Kernel Size & Dropout rate & Embedding Dimension 	& Number of Filters & Best Accuracy\\
 		\midrule
-		Average Pooling & 0.01  & 100 & 0.1 & 100 & 2 & 32 \\
+		Max Pooling & 0.01  & (3,4,5) & 0.3 & 100 & 100 & 0.576 \\
+		Max Pooling & 0.1  & (3,4,5) & 0.1 & 100 & 100 & 0.582 \\
+		Max Pooling & 0.01  & (3,4,5) & 0.3 & 100 & 100 & 0.6256 \\
+		Max Pooling & 0.1  & (3,4,5) & 0.3 & 100 & 100 & 0.5756 \\
+		Max Pooling & 0.1  & (3,4,5) & 0.5 & 100 & 150 & 0.5856 \\
+		Max Pooling & 0.1  & (2,3,4) & 0.3 & 100 & 100 & 0.6028 \\
 		\bottomrule
 	\end{tabular}
 \end{table}
@@ -101,41 +108,40 @@ The following are the hyperparameters tuning results.
 
 \section{Results and Analysis}
 
-\subsection{Development Set Accuracy and Test set Accuracy}
+\subsection{Development Set}
 
 \begin{table}[htb]
-	\caption{Development accuracy and Test Set accuracy}
+	\caption{Accuracy for final training}
 	\label{sample-table}
 	\centering
 	\begin{tabular}{ll}
 		\toprule
 		\cmidrule{1-2}
-		Dataset &Accuracy\\
+		Dataset & Accuracy\\
 		\midrule
-		Test Set & 0.01   \\
-		Development Set & 0.01  \\
+		Development Set & 0.634   \\
 		\bottomrule
 	\end{tabular}
 \end{table}
 
 \subsection{Analysis}
-For the kernel sizes, we found that for larger kernel size, we need to train more iterations but getting converge.
+For ths size of filters, a larger size kernel can overlook at the features and could skip the essential details in the input whereas a smaller size kernel could provide more information leading to more confusion. From the results,
 
-For the dropout, we found out that, the it requires more time to converge but getting higher best test set accuracy. The reason for that may be due to dropout forces a neural network to learn more robust features that are useful in conjunction with many different random subsets of the other neurons.
+For the number of filter, the more the number of filter, the more of different convolution. 
 
-We found out that for higher learning rate, the higher the convergnce rate. However, 
+For the dropout, we found out that, the it requires more time to converge . The reason for that may be due to dropout forces a neural network to learn more robust features that are useful in conjunction with many different random subsets of the other neurons. And sometimes, 
+
+For the learning rate, we found out that the lower the value, the slower the convergence. On the other hand, the higher the learning rate, the faster the convergence. However, high learning rate also earlier cause early stop.
+
+For comparison between max pooing and average pooling, we found out that average pooling perform better max pooling. Since the max pooling rejects a big chunk of data and retains the max. Average pooling on the other hand, do not reject all of it and retains more information. Because of that sometimes the variance in a max pooling is not significant.
+
 \section{Bonus}
 
 \subsection{Dynamic Padding}
-The following are the screen shot of the Predictor Network, CNN Encoder Network and loading the pretrained encoder.
-
-\subsection{Pretrained Word Embedding}
-For Pretrained Word Embedding, we have tried to replace the original word embedding layer by the pretrained \textbf{word2Vector} with \textbf{Google News corpus} (3 billion running words) word vector model. (Google News Corpus: https://github.com/mmihaltz/word2vec-GoogleNews-vectors). And since the dimension of the embedding matrix is enormously big which cause some memory error while training, we have limited to only use ten thousands of vocabs. All the above process can be easily done through by a python libarary named \textbf{gensim}.
-
-And the following are the results of using pretrained embedding.
+For Dynamic Padding, I have defined my own \textbf{collate\_fn()} to process the batch by dynamicially padding the batch with maximum length of the embedding inside that batch. Instead of just maximum length of a batch, defining my own \textbf{collate\_fn()} can be more flexibly process the batch since I can also handle some other problems caused by the batch with different length.
 
 \begin{table}[htb]
-	\caption{Development accuracy and Test Set accuracy}
+	\caption{Accuracy of using dynamic padding}
 	\label{sample-table}
 	\centering
 	\begin{tabular}{ll}
@@ -143,20 +149,37 @@ And the following are the results of using pretrained embedding.
 		\cmidrule{1-2}
 		Dataset &Accuracy\\
 		\midrule
-		Test Set & 0.01   \\
-		Development Set & 0.01  \\
+		Development Set & 0.57  \\
 		\bottomrule
 	\end{tabular}
 \end{table}
+
+
+\subsection{Pretrained Word Embedding}
+For Pretrained Word Embedding, we have tried to replace the original word embedding layer by the pretrained \textbf{word2Vector} with \textbf{Google News corpus} (3 billion running words) word vector model. (Google News Corpus: https://github.com/mmihaltz/word2vec-GoogleNews-vectors). And since the dimension of the embedding matrix is enormously big which cause some memory error during training, we have limited to only use ten thousands of vocabs. All above process can be easily done through by a python libarary named \textbf{gensim}. And the following are the results of using pretrained embedding.
+
+\begin{table}[htb]
+	\caption{Accuracy of using Pretained Word Embedding}
+	\label{sample-table}
+	\centering
+	\begin{tabular}{ll}
+		\toprule
+		\cmidrule{1-2}
+		Dataset &Accuracy\\
+		\midrule
+		Development Set & 0.6011  \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+\pagebreak
 
 \subsection{Other CNN Architectures}
 For other CNN archiectures, we have implmented character CNN by following the paper \textbf{Character-level Convolutional Networks for Text Classification}. (https://papers.nips.cc/paper/5782-character-level-convolutional-networks-for-text-classification.pdf) 
 
 Same as the paper, we have defined a list of characters which includes 26 English letters, 10 digits, 34 special characters and one blank characters. (\textbf{70 Characters in total})
 
-In the later part, we transfer those characters as 1-hot encoding and used it to create the sentence vectors for each sentences. For unknown characters, blank characters are used to replace it. The sentence vectors would then be inputed into the CNN with the following archiecture which is quite similiar to the paper.
-
-\pagebreak
+In the later part, we transfer those characters as 1-hot encoding and use it to create the sentence vectors for each sentences. For unknown characters, blank characters are used to replace it. The sentence vectors would then be inputed into the CNN with the following archiecture which is quite similiar to the paper.
 
 \begin{table}[htb]
 \caption{Char CNN Archiecture we used}
@@ -184,7 +207,7 @@ In the later part, we transfer those characters as 1-hot encoding and used it to
 And the following are the results of using Char CNN. 
 
 \begin{table}[htb]
-	\caption{Development accuracy and Test Set accuracy}
+	\caption{Accuracy of using char CNN as our model}
 	\label{sample-table}
 	\centering
 	\begin{tabular}{ll}
@@ -192,8 +215,7 @@ And the following are the results of using Char CNN.
 		\cmidrule{1-2}
 		Dataset &Accuracy\\
 		\midrule
-		Test Set & 0.01   \\
-		Development Set & 0.01  \\
+		Development Set & 0.6312  \\
 		\bottomrule
 	\end{tabular}
 \end{table}

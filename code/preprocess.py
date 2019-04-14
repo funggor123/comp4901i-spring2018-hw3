@@ -5,6 +5,7 @@ import pickle
 import unicodedata
 import torch
 import torch.utils.data as data
+import collections
 
 PAD_INDEX = 0
 UNK_INDEX = 1
@@ -199,6 +200,7 @@ def Lang(vocab, file_name):
     df = pd.read_csv(file_name)
 
     sent_len_list = []
+    rating = []
     ############################################################
     # TO DO
     # build vocabulary and statistic
@@ -211,6 +213,7 @@ def Lang(vocab, file_name):
         sent = clean(str(sent)).split()
         vocab.index_words(sent)
         sent_len_list.append(len(sent))
+        rating.append(int[df["rating"][i]])
 
     # 2. Number of words
     statistic['word_num'] = vocab.word_num
@@ -231,9 +234,8 @@ def Lang(vocab, file_name):
     # 7. Sentence Length Std
     statistic["len_std"] = np.array(sent_len_list).std()
 
-    # 8. Distrubution of Classes
-
-    ## TODO Distrubution of Classes
+    # 8. Class Disturbution
+    statistic["class_distribution"] = collections.Counter(rating)
 
     ############################################################
     return vocab, statistic
